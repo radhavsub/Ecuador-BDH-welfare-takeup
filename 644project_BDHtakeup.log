@@ -1,0 +1,1688 @@
+------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  C:\Users\radha\Downloads\econ644_output\644project_BDHtakeup.log
+  log type:  text
+ opened on:   3 May 2026, 16:19:22
+
+. 
+. capture which esttab
+
+. if _rc {
+.     ssc install estout, replace
+. }
+
+. 
+. *---------------------------------------------------*
+. * IMPORT DATA
+. *---------------------------------------------------*
+. 
+. import excel "`datafile'", sheet("Sheet1") firstrow clear
+
+. rename *, lower
+
+. 
+. describe
+
+Contains data
+  obs:        11,449                          
+ vars:            37                          
+ size:     1,534,166                          
+------------------------------------------------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+------------------------------------------------------------------------------------------------------------------------
+identif_hog     double  %10.0g                IDENTIF_HOG
+bdhoct13        byte    %10.0g                BDHOCT13
+school          byte    %10.0g                SCHOOL
+sixtyfive       byte    %10.0g                SIXTYFIVE
+disabled        byte    %10.0g                DISABLED
+eligcateg       byte    %10.0g                ELIGCATEG
+sixtyfivedq     byte    %10.0g                SIXTYFIVEDQ
+disableddq      byte    %10.0g                DISABLEDDQ
+hhpersons       byte    %10.0g                HHPERSONS
+nbiparroq       double  %10.0g                NBIPARROQ
+hhconsump       double  %14.2f                HHCONSUMP
+j_sch4up        byte    %10.0g                J_SCH4UP
+cellphone       byte    %10.0g                CELLPHONE
+internet        byte    %10.0g                INTERNET
+indigonly       byte    %10.0g                INDIGONLY
+barelypoor40    byte    %10.0g                BARELYPOOR40
+densidad        double  %14.2f                DENSIDAD
+densidad05      byte    %10.0g                Densidad05
+densidad10      byte    %10.0g                Densidad10
+densidad15      byte    %10.0g                Densidad15
+densidad20      byte    %10.0g                Densidad20
+spentondocs     byte    %10.0g                SPENTONDOCS
+birthatt        double  %10.0g                BIRTHATT
+nofeelpoor      byte    %10.0g                NOFEELPOOR
+j_mmpob         byte    %10.0g                J_MMPOB
+j_pob           byte    %10.0g                J_POB
+j_muypob        byte    %10.0g                J_MUYPOB
+satisgovt       byte    %10.0g                SATISGOVT
+poor40          byte    %10.0g                POOR40
+provincia       str30   %30s                  PROVINCIA
+parroquia       str30   %30s                  PARROQUIA
+poblacion       long    %10.0g                POBLACION
+periodo         int     %tdMon-YY             PERIODO
+schoolyears     byte    %10.0g                SCHOOLYEARS
+bdhever         byte    %10.0g                BDHEVER
+bdhecv6r        byte    %10.0g                BDHECV6R
+sexohhh         byte    %10.0g                SEXOHHH
+------------------------------------------------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.
+
+. summarize
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+ identif_hog |     11,449    1.13e+14    6.40e+13   1.02e+13   2.40e+14
+    bdhoct13 |     11,449    .6503625    .4768763          0          1
+      school |     11,449    .7100183    .4537734          0          1
+   sixtyfive |     11,449    .2105861    .4077427          0          1
+    disabled |     11,449    .0849856    .2788724          0          1
+-------------+---------------------------------------------------------
+   eligcateg |     11,449     1.00559    .5928501          0          3
+ sixtyfivedq |     11,449    .0611407    .2395987          0          1
+  disableddq |     11,449    .0234082    .1512026          0          1
+   hhpersons |     11,449    4.731854     2.15354          1         20
+   nbiparroq |     11,449    .7672917    .2037886   .2232782          1
+-------------+---------------------------------------------------------
+   hhconsump |     11,449    70.86129    22.05282   7.133879   106.2155
+    j_sch4up |     11,449    .5934143    .4912177          0          1
+   cellphone |     11,449    .5884357    .4921385          0          1
+    internet |     11,449    .0610534    .2394386          0          1
+   indigonly |     11,449    .0136256     .115936          0          1
+-------------+---------------------------------------------------------
+barelypoor40 |     11,449    .1431566    .3502478          0          1
+    densidad |     11,449    382.6661    847.9505    .326224   4701.629
+  densidad05 |     11,449    .0598306     .237183          0          1
+  densidad10 |     11,449    .1286575    .3348351          0          1
+  densidad15 |     11,449    .1832474    .3868861          0          1
+-------------+---------------------------------------------------------
+  densidad20 |     11,449    .2193205    .4138042          0          1
+ spentondocs |     11,449    .1727662    .3780615          0          1
+    birthatt |     11,449    .8218061    .2363783          0          1
+  nofeelpoor |     11,449    .0181675    .1335628          0          1
+     j_mmpob |     11,449    .3471919    .4760982          0          1
+-------------+---------------------------------------------------------
+       j_pob |     11,449    .5258101    .4993552          0          1
+    j_muypob |     11,449    .1088305      .31144          0          1
+   satisgovt |     11,449    6.698751    2.339278          1         10
+      poor40 |     11,449           1           0          1          1
+   provincia |          0
+-------------+---------------------------------------------------------
+   parroquia |          0
+   poblacion |     11,449    132069.4    438668.7        355    2291158
+     periodo |     11,449    19835.93    103.8566      19663      19997
+ schoolyears |     10,240    4.549414    1.818962          0         10
+     bdhever |     11,449    .7386671    .4393801          0          1
+-------------+---------------------------------------------------------
+    bdhecv6r |     11,449    .5888724    .4920598          0          1
+     sexohhh |     11,449    .2177483    .4127334          0          1
+
+. 
+. *---------------------------------------------------*
+. * KEEP NEEDED VARIABLES
+. *---------------------------------------------------*
+. 
+. keep identif_hog bdhoct13 school sixtyfive disabled ///
+>      sixtyfivedq disableddq hhpersons hhconsump ///
+>      j_sch4up cellphone internet indigonly ///
+>      densidad densidad10 spentondocs birthatt nofeelpoor ///
+>      satisgovt provincia parroquia periodo bdhecv6r sexohhh
+
+. 
+. *---------------------------------------------------*
+. * RENAME VARIABLES
+. *---------------------------------------------------*
+. 
+. rename identif_hog household_id
+
+. rename bdhoct13 bdh_takeup
+
+. rename school school_member
+
+. rename sixtyfive elderly_member
+
+. rename disabled disabled_member
+
+. rename sixtyfivedq elderly_disqualified
+
+. rename disableddq disabled_disqualified
+
+. rename hhpersons household_size
+
+. rename hhconsump consumption_pc
+
+. rename j_sch4up head_school4up
+
+. rename cellphone has_cellphone
+
+. rename internet used_internet
+
+. rename indigonly indigenous_only
+
+. rename densidad parish_density
+
+. rename densidad10 low_density
+
+. rename spentondocs spent_documents
+
+. rename birthatt birth_attendance
+
+. rename nofeelpoor not_feel_poor
+
+. rename satisgovt govt_satisfaction
+
+. rename provincia province
+
+. rename parroquia parish
+
+. rename periodo survey_period
+
+. rename bdhecv6r bdh_current
+
+. rename sexohhh head_sex
+
+. 
+. *---------------------------------------------------*
+. * CREATE ANALYSIS VARIABLES
+. *---------------------------------------------------*
+. 
+. capture drop log_consumption
+
+. capture drop log_household_size
+
+. capture drop tech_group
+
+. capture drop high_govt_satisfaction
+
+. 
+. gen log_consumption = ln(consumption_pc)
+
+. gen log_household_size = ln(household_size)
+
+. 
+. gen tech_group = .
+(11,449 missing values generated)
+
+. replace tech_group = 0 if has_cellphone == 0 & used_internet == 0
+(4,610 real changes made)
+
+. replace tech_group = 1 if has_cellphone == 1 & used_internet == 0
+(6,140 real changes made)
+
+. replace tech_group = 2 if has_cellphone == 0 & used_internet == 1
+(102 real changes made)
+
+. replace tech_group = 3 if has_cellphone == 1 & used_internet == 1
+(597 real changes made)
+
+. 
+. label define techlbl 0 "No cellphone / no internet" ///
+>                     1 "Cellphone only" ///
+>                     2 "Internet only" ///
+>                     3 "Cellphone and internet", replace
+
+. label values tech_group techlbl
+
+. 
+. gen high_govt_satisfaction = .
+(11,449 missing values generated)
+
+. replace high_govt_satisfaction = 1 if govt_satisfaction >= 7 & !missing(govt_satisfaction)
+(6,710 real changes made)
+
+. replace high_govt_satisfaction = 0 if govt_satisfaction < 7 & !missing(govt_satisfaction)
+(4,739 real changes made)
+
+. 
+. label define highsatlbl 0 "Govt satisfaction < 7" 1 "Govt satisfaction 7-10", replace
+
+. label values high_govt_satisfaction highsatlbl
+
+. 
+. *---------------------------------------------------*
+. * LABEL VARIABLES
+. *---------------------------------------------------*
+. 
+. label variable household_id               "Household ID"
+
+. label variable bdh_takeup                 "BDH takeup in Oct. 2013"
+
+. label variable low_density                "Low population density (<10/sq. km.)"
+
+. label variable parish_density             "Parish population density"
+
+. label variable log_consumption            "Log adjusted per capita consumption"
+
+. label variable log_household_size         "Log household size"
+
+. label variable school_member              "Household has school-going member"
+
+. label variable elderly_member             "Household has member age 65+"
+
+. label variable disabled_member            "Household has disabled member"
+
+. label variable elderly_disqualified       "Senior member disqualification indicator"
+
+. label variable disabled_disqualified      "Disabled member disqualification indicator"
+
+. label variable head_school4up             "Household head has 4+ years schooling"
+
+. label variable indigenous_only            "Indigenous language only"
+
+. label variable spent_documents            "Spent money on documents"
+
+. label variable birth_attendance           "Birth attendance variable"
+
+. label variable not_feel_poor              "Household head says household is not poor"
+
+. label variable govt_satisfaction          "Satisfaction with government (1-10)"
+
+. label variable high_govt_satisfaction     "High government satisfaction (7-10)"
+
+. label variable has_cellphone              "HH head has activated cellphone"
+
+. label variable used_internet              "HH head used internet in past week"
+
+. label variable tech_group                 "Technology access group"
+
+. label variable household_size             "Household size"
+
+. label variable consumption_pc             "Adjusted per capita consumption"
+
+. 
+. label define takeuplbl 0 "No" 1 "Yes", replace
+
+. label values bdh_takeup takeuplbl
+
+. 
+. label define denslbl 0 "Higher-density parish" 1 "Low-density parish", replace
+
+. label values low_density denslbl
+
+. 
+. save "`outdir'\temp_file.dta", replace
+file C:\Users\radha\Downloads\econ644_output\temp_file.dta saved
+
+. 
+. *---------------------------------------------------*
+. * DEFINE REGRESSION BLOCKS
+. *---------------------------------------------------*
+. 
+. local yvar bdh_takeup
+
+. local mainx low_density
+
+. 
+. local program_controls log_consumption log_household_size school_member elderly_member disabled_member ///
+>                        elderly_disqualified disabled_disqualified head_school4up ///
+>                        indigenous_only spent_documents birth_attendance
+
+. 
+. local info_controls has_cellphone used_internet
+
+. local psych_controls not_feel_poor govt_satisfaction
+
+. local full_controls `program_controls' `info_controls' `psych_controls'
+
+. 
+. *---------------------------------------------------*
+. * TABLE 1: DESCRIPTIVE STATISTICS BY BDH TAKEUP
+. *---------------------------------------------------*
+. 
+. putexcel set "`tabledir'\table1_descriptive_stats_by_bdh_takeup.xlsx", replace
+
+. 
+. putexcel A1=("Variable") ///
+>          B1=("Category") ///
+>          C1=("Non-BDH N") ///
+>          D1=("Non-BDH Mean") ///
+>          E1=("Non-BDH SD") ///
+>          F1=("Non-BDH Min") ///
+>          G1=("Non-BDH Max") ///
+>          H1=("BDH N") ///
+>          I1=("BDH Mean") ///
+>          J1=("BDH SD") ///
+>          K1=("BDH Min") ///
+>          L1=("BDH Max")
+file C:\Users\radha\Downloads\econ644_output\tables\table1_descriptive_stats_by_bdh_takeup.xlsx saved
+
+. 
+. local row = 2
+
+. 
+. local main_vars `mainx'
+
+. local program_vars `program_controls'
+
+. local info_vars `info_controls'
+
+. local psych_vars `psych_controls'
+
+. 
+. foreach group in main program info psych {
+  2. 
+.     if "`group'" == "main" {
+  3.         local varlist `main_vars'
+  4.         local groupname "Main explanatory variable"
+  5.     }
+  6. 
+.     if "`group'" == "program" {
+  7.         local varlist `program_vars'
+  8.         local groupname "Program controls"
+  9.     }
+ 10. 
+.     if "`group'" == "info" {
+ 11.         local varlist `info_vars'
+ 12.         local groupname "Informational controls"
+ 13.     }
+ 14. 
+.     if "`group'" == "psych" {
+ 15.         local varlist `psych_vars'
+ 16.         local groupname "Psychological controls"
+ 17.     }
+ 18. 
+.     foreach v of local varlist {
+ 19. 
+.         local vlabel : variable label `v'
+ 20.         if "`vlabel'" == "" {
+ 21.             local vlabel "`v'"
+ 22.         }
+ 23. 
+.         quietly summarize `v' if `yvar' == 0
+ 24.         local n0 = r(N)
+ 25.         local mean0 = r(mean)
+ 26.         local sd0 = r(sd)
+ 27.         local min0 = r(min)
+ 28.         local max0 = r(max)
+ 29. 
+.         quietly summarize `v' if `yvar' == 1
+ 30.         local n1 = r(N)
+ 31.         local mean1 = r(mean)
+ 32.         local sd1 = r(sd)
+ 33.         local min1 = r(min)
+ 34.         local max1 = r(max)
+ 35. 
+.         putexcel A`row'=("`vlabel'") ///
+>                  B`row'=("`groupname'") ///
+>                  C`row'=(`n0') ///
+>                  D`row'=(`mean0') ///
+>                  E`row'=(`sd0') ///
+>                  F`row'=(`min0') ///
+>                  G`row'=(`max0') ///
+>                  H`row'=(`n1') ///
+>                  I`row'=(`mean1') ///
+>                  J`row'=(`sd1') ///
+>                  K`row'=(`min1') ///
+>                  L`row'=(`max1')
+ 36. 
+.         local row = `row' + 1
+ 37.     }
+ 38. }
+file C:\Users\radha\Downloads\econ644_output\tables\table1_descriptive_stats_by_bdh_takeup.xlsx saved
+file C:\Users\radha\Downloads\econ644_output\tables\table1_descriptive_stats_by_bdh_takeup.xlsx saved
+file C:\Users\radha\Downloads\econ644_output\tables\table1_descriptive_stats_by_bdh_takeup.xlsx saved
+file C:\Users\radha\Downloads\econ644_output\tables\table1_descriptive_stats_by_bdh_takeup.xlsx saved
+file C:\Users\radha\Downloads\econ644_output\tables\table1_descriptive_stats_by_bdh_takeup.xlsx saved
+file C:\Users\radha\Downloads\econ644_output\tables\table1_descriptive_stats_by_bdh_takeup.xlsx saved
+file C:\Users\radha\Downloads\econ644_output\tables\table1_descriptive_stats_by_bdh_takeup.xlsx saved
+file C:\Users\radha\Downloads\econ644_output\tables\table1_descriptive_stats_by_bdh_takeup.xlsx saved
+file C:\Users\radha\Downloads\econ644_output\tables\table1_descriptive_stats_by_bdh_takeup.xlsx saved
+file C:\Users\radha\Downloads\econ644_output\tables\table1_descriptive_stats_by_bdh_takeup.xlsx saved
+file C:\Users\radha\Downloads\econ644_output\tables\table1_descriptive_stats_by_bdh_takeup.xlsx saved
+file C:\Users\radha\Downloads\econ644_output\tables\table1_descriptive_stats_by_bdh_takeup.xlsx saved
+file C:\Users\radha\Downloads\econ644_output\tables\table1_descriptive_stats_by_bdh_takeup.xlsx saved
+file C:\Users\radha\Downloads\econ644_output\tables\table1_descriptive_stats_by_bdh_takeup.xlsx saved
+file C:\Users\radha\Downloads\econ644_output\tables\table1_descriptive_stats_by_bdh_takeup.xlsx saved
+file C:\Users\radha\Downloads\econ644_output\tables\table1_descriptive_stats_by_bdh_takeup.xlsx saved
+
+. 
+. 
+. 
+. *---------------------------------------------------*
+. * TABLE 2: OLS MODELS
+. *---------------------------------------------------*
+. 
+. eststo clear
+
+. 
+. reg `yvar' `mainx', vce(robust)
+
+Linear regression                               Number of obs     =     11,449
+                                                F(1, 11447)       =       6.58
+                                                Prob > F          =     0.0103
+                                                R-squared         =     0.0006
+                                                Root MSE          =     .47677
+
+------------------------------------------------------------------------------
+             |               Robust
+  bdh_takeup |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+ low_density |    .033515   .0130684     2.56   0.010     .0078987    .0591313
+       _cons |   .6460505   .0047881   134.93   0.000      .636665     .655436
+------------------------------------------------------------------------------
+
+. eststo ols1
+
+. 
+. reg `yvar' `mainx' `program_controls', vce(robust)
+
+Linear regression                               Number of obs     =     11,449
+                                                F(12, 11436)      =     181.97
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.1349
+                                                Root MSE          =     .44377
+
+---------------------------------------------------------------------------------------
+                      |               Robust
+           bdh_takeup |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+----------------------+----------------------------------------------------------------
+          low_density |  -.0516145   .0137449    -3.76   0.000    -.0785568   -.0246722
+      log_consumption |  -.1576053   .0126735   -12.44   0.000    -.1824475   -.1327632
+   log_household_size |   .0054065   .0110865     0.49   0.626     -.016325    .0271381
+        school_member |   .2113147   .0119711    17.65   0.000     .1878494    .2347801
+       elderly_member |   .3217501   .0113938    28.24   0.000     .2994162    .3440839
+      disabled_member |   .1791343   .0143792    12.46   0.000     .1509486      .20732
+ elderly_disqualified |   .0043558   .0176238     0.25   0.805    -.0301899    .0389015
+disabled_disqualified |  -.0151376   .0264273    -0.57   0.567    -.0669397    .0366645
+       head_school4up |  -.0333654   .0089246    -3.74   0.000    -.0508591   -.0158716
+      indigenous_only |   .0242893   .0305046     0.80   0.426    -.0355049    .0840834
+      spent_documents |   .0137972   .0113173     1.22   0.223    -.0083866     .035981
+     birth_attendance |  -.1850275    .019749    -9.37   0.000     -.223739   -.1463161
+                _cons |   1.247341     .05769    21.62   0.000     1.134258    1.360423
+---------------------------------------------------------------------------------------
+
+. eststo ols2
+
+. 
+. reg `yvar' `mainx' `program_controls' `info_controls', vce(robust)
+
+Linear regression                               Number of obs     =     11,449
+                                                F(14, 11434)      =     184.60
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.1500
+                                                Root MSE          =     .43992
+
+---------------------------------------------------------------------------------------
+                      |               Robust
+           bdh_takeup |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+----------------------+----------------------------------------------------------------
+          low_density |  -.0543389   .0137712    -3.95   0.000    -.0813329   -.0273449
+      log_consumption |  -.1355681   .0127388   -10.64   0.000    -.1605383   -.1105979
+   log_household_size |   .0061659   .0109787     0.56   0.574    -.0153544    .0276861
+        school_member |   .2137432   .0118366    18.06   0.000     .1905413     .236945
+       elderly_member |   .2995187   .0117133    25.57   0.000     .2765586    .3224788
+      disabled_member |   .1757807   .0142049    12.37   0.000     .1479368    .2036247
+ elderly_disqualified |   .0038196   .0175299     0.22   0.828     -.030542    .0381812
+disabled_disqualified |  -.0128835   .0259331    -0.50   0.619    -.0637169    .0379498
+       head_school4up |  -.0326301   .0088856    -3.67   0.000    -.0500474   -.0152128
+      indigenous_only |   .0209065    .029969     0.70   0.485    -.0378378    .0796508
+      spent_documents |   .0201708   .0112717     1.79   0.074    -.0019236    .0422652
+     birth_attendance |  -.1731297   .0196109    -8.83   0.000    -.2115705   -.1346888
+        has_cellphone |  -.0270595   .0092029    -2.94   0.003    -.0450987   -.0090203
+        used_internet |  -.2381086    .017889   -13.31   0.000    -.2731741   -.2030432
+                _cons |    1.17646   .0574912    20.46   0.000     1.063767    1.289152
+---------------------------------------------------------------------------------------
+
+. eststo ols3
+
+. 
+. reg `yvar' `mainx' `program_controls' `info_controls' `psych_controls', vce(robust)
+
+Linear regression                               Number of obs     =     11,449
+                                                F(16, 11432)      =     174.87
+                                                Prob > F          =     0.0000
+                                                R-squared         =     0.1590
+                                                Root MSE          =     .43763
+
+---------------------------------------------------------------------------------------
+                      |               Robust
+           bdh_takeup |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+----------------------+----------------------------------------------------------------
+          low_density |  -.0567427   .0137486    -4.13   0.000    -.0836923    -.029793
+      log_consumption |  -.1332274   .0127032   -10.49   0.000    -.1581278   -.1083269
+   log_household_size |   .0072056   .0109405     0.66   0.510    -.0142397    .0286509
+        school_member |    .212015   .0117966    17.97   0.000     .1888916    .2351384
+       elderly_member |   .2967018   .0116768    25.41   0.000     .2738132    .3195903
+      disabled_member |   .1727776   .0141821    12.18   0.000     .1449781     .200577
+ elderly_disqualified |   .0031195   .0174255     0.18   0.858    -.0310375    .0372765
+disabled_disqualified |  -.0127139   .0257751    -0.49   0.622    -.0632375    .0378096
+       head_school4up |  -.0318394   .0088431    -3.60   0.000    -.0491734   -.0145054
+      indigenous_only |   .0232461    .030058     0.77   0.439    -.0356726    .0821649
+      spent_documents |   .0201119   .0112498     1.79   0.074    -.0019397    .0421634
+     birth_attendance |  -.1815173    .019635    -9.24   0.000    -.2200053   -.1430292
+        has_cellphone |  -.0259721   .0091597    -2.84   0.005    -.0439267   -.0080175
+        used_internet |  -.2321592   .0178871   -12.98   0.000     -.267221   -.1970974
+        not_feel_poor |  -.2578115    .029918    -8.62   0.000     -.316456    -.199167
+    govt_satisfaction |    .012808   .0017899     7.16   0.000     .0092996    .0163165
+                _cons |    1.09184   .0583725    18.70   0.000     .9774203     1.20626
+---------------------------------------------------------------------------------------
+
+. eststo ols4
+
+. 
+. esttab ols1 ols2 ols3 ols4 using "`tabledir'\table2_ols_models.rtf", replace ///
+>     se star(* 0.10 ** 0.05 *** 0.01) ///
+>     title("Table 2: OLS Models of BDH Take-Up") ///
+>     mtitles("No Controls" "Program Controls" "Program + Info" "Full Model") ///
+>     label compress ///
+>     stats(N r2, labels("Observations" "R-squared"))
+(output written to C:\Users\radha\Downloads\econ644_output\tables\table2_ols_models.rtf)
+
+. 
+. *---------------------------------------------------*
+. * TABLE 3: PROBIT MODELS WITH INTERACTIONS
+. *---------------------------------------------------*
+. 
+. eststo clear
+
+. 
+. probit `yvar' i.`mainx'##i.has_cellphone ///
+>     `program_controls' used_internet `psych_controls', vce(robust)
+
+Iteration 0:   log pseudolikelihood = -7410.0443  
+Iteration 1:   log pseudolikelihood = -6403.9035  
+Iteration 2:   log pseudolikelihood =  -6393.703  
+Iteration 3:   log pseudolikelihood = -6393.6768  
+Iteration 4:   log pseudolikelihood = -6393.6768  
+
+Probit regression                               Number of obs     =     11,449
+                                                Wald chi2(17)     =    1393.26
+                                                Prob > chi2       =     0.0000
+Log pseudolikelihood = -6393.6768               Pseudo R2         =     0.1372
+
+-------------------------------------------------------------------------------------------
+                          |               Robust
+               bdh_takeup |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+--------------------------+----------------------------------------------------------------
+              low_density |
+      Low-density parish  |  -.2782477   .0558948    -4.98   0.000    -.3877995   -.1686958
+          1.has_cellphone |  -.1055275   .0307501    -3.43   0.001    -.1657966   -.0452584
+                          |
+low_density#has_cellphone |
+    Low-density parish#1  |   .2015535   .0838952     2.40   0.016     .0371219    .3659852
+                          |
+          log_consumption |   -.428168    .043683    -9.80   0.000    -.5137851   -.3425509
+       log_household_size |   .0468408   .0351194     1.33   0.182    -.0219918    .1156735
+            school_member |   .6408214   .0367783    17.42   0.000     .5687373    .7129056
+           elderly_member |   1.011301   .0507103    19.94   0.000     .9119109    1.110691
+          disabled_member |   .6899649   .0711816     9.69   0.000     .5504516    .8294782
+     elderly_disqualified |  -.0163934   .0780106    -0.21   0.834    -.1692913    .1365046
+    disabled_disqualified |  -.0267959   .1291695    -0.21   0.836    -.2799635    .2263716
+           head_school4up |  -.1002848   .0276875    -3.62   0.000    -.1545513   -.0460182
+          indigenous_only |   .1540153   .1289554     1.19   0.232    -.0987327    .4067632
+          spent_documents |    .057563   .0345373     1.67   0.096    -.0101288    .1252548
+         birth_attendance |  -.6027519   .0679799    -8.87   0.000    -.7359901   -.4695137
+            used_internet |  -.6429609   .0531527   -12.10   0.000    -.7471381   -.5387836
+            not_feel_poor |  -.7508951    .095277    -7.88   0.000    -.9376347   -.5641555
+        govt_satisfaction |   .0400081   .0054942     7.28   0.000     .0292396    .0507766
+                    _cons |   1.878906   .2014314     9.33   0.000     1.484108    2.273704
+-------------------------------------------------------------------------------------------
+
+. eststo pint1
+
+. 
+. probit `yvar' i.`mainx'##i.used_internet ///
+>     `program_controls' has_cellphone `psych_controls', vce(robust)
+
+Iteration 0:   log pseudolikelihood = -7410.0443  
+Iteration 1:   log pseudolikelihood = -6406.7957  
+Iteration 2:   log pseudolikelihood = -6396.6785  
+Iteration 3:   log pseudolikelihood = -6396.6526  
+Iteration 4:   log pseudolikelihood = -6396.6526  
+
+Probit regression                               Number of obs     =     11,449
+                                                Wald chi2(17)     =    1390.62
+                                                Prob > chi2       =     0.0000
+Log pseudolikelihood = -6396.6526               Pseudo R2         =     0.1368
+
+-------------------------------------------------------------------------------------------
+                          |               Robust
+               bdh_takeup |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+--------------------------+----------------------------------------------------------------
+              low_density |
+      Low-density parish  |  -.1966246   .0451957    -4.35   0.000    -.2852066   -.1080426
+          1.used_internet |  -.6474495   .0559054   -11.58   0.000    -.7570221    -.537877
+                          |
+low_density#used_internet |
+    Low-density parish#1  |   .0595905   .1755809     0.34   0.734    -.2845416    .4037227
+                          |
+          log_consumption |  -.4232399   .0436378    -9.70   0.000    -.5087684   -.3377113
+       log_household_size |   .0479762   .0351075     1.37   0.172    -.0208332    .1167856
+            school_member |   .6397859   .0367885    17.39   0.000     .5676819      .71189
+           elderly_member |   1.015203   .0507192    20.02   0.000     .9157949    1.114611
+          disabled_member |   .6914647   .0711371     9.72   0.000     .5520385    .8308908
+     elderly_disqualified |  -.0164035   .0778688    -0.21   0.833    -.1690235    .1362165
+    disabled_disqualified |  -.0268944   .1289575    -0.21   0.835    -.2796464    .2258576
+           head_school4up |  -.1011391   .0276838    -3.65   0.000    -.1553984   -.0468797
+          indigenous_only |   .1461282   .1294611     1.13   0.259    -.1076109    .3998673
+          spent_documents |   .0565381   .0345094     1.64   0.101    -.0110991    .1241752
+         birth_attendance |  -.5853237   .0674678    -8.68   0.000    -.7175582   -.4530892
+            has_cellphone |  -.0805217   .0289344    -2.78   0.005    -.1372322   -.0238113
+            not_feel_poor |  -.7562408   .0952969    -7.94   0.000    -.9430193   -.5694623
+        govt_satisfaction |   .0396942   .0054917     7.23   0.000     .0289307    .0504577
+                    _cons |   1.827878   .2004564     9.12   0.000      1.43499    2.220765
+-------------------------------------------------------------------------------------------
+
+. eststo pint2
+
+. 
+. probit `yvar' i.`mainx'##c.govt_satisfaction ///
+>     `program_controls' `info_controls' not_feel_poor, vce(robust)
+
+Iteration 0:   log pseudolikelihood = -7410.0443  
+Iteration 1:   log pseudolikelihood = -6406.7472  
+Iteration 2:   log pseudolikelihood = -6396.6531  
+Iteration 3:   log pseudolikelihood = -6396.6272  
+Iteration 4:   log pseudolikelihood = -6396.6272  
+
+Probit regression                               Number of obs     =     11,449
+                                                Wald chi2(17)     =    1387.62
+                                                Prob > chi2       =     0.0000
+Log pseudolikelihood = -6396.6272               Pseudo R2         =     0.1368
+
+-------------------------------------------------------------------------------------------------
+                                |               Robust
+                     bdh_takeup |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+--------------------------------+----------------------------------------------------------------
+                    low_density |
+            Low-density parish  |  -.2397626   .1248328    -1.92   0.055    -.4844305    .0049053
+              govt_satisfaction |   .0388728   .0058302     6.67   0.000     .0274459    .0502997
+                                |
+low_density#c.govt_satisfaction |
+            Low-density parish  |   .0068531    .017228     0.40   0.691    -.0269132    .0406194
+                                |
+                log_consumption |  -.4227612   .0436344    -9.69   0.000    -.5082831   -.3372393
+             log_household_size |   .0480228   .0351058     1.37   0.171    -.0207833     .116829
+                  school_member |   .6399737   .0367833    17.40   0.000     .5678797    .7120676
+                 elderly_member |   1.015154   .0507133    20.02   0.000     .9157574     1.11455
+                disabled_member |    .691435   .0711272     9.72   0.000     .5520282    .8308418
+           elderly_disqualified |  -.0164117   .0778675    -0.21   0.833    -.1690292    .1362058
+          disabled_disqualified |   -.026335   .1290144    -0.20   0.838    -.2791986    .2265285
+                 head_school4up |  -.1012047   .0276832    -3.66   0.000    -.1554628   -.0469465
+                indigenous_only |   .1459868   .1295609     1.13   0.260    -.1079478    .3999214
+                spent_documents |   .0568258    .034503     1.65   0.100    -.0107988    .1244505
+               birth_attendance |  -.5853572    .067429    -8.68   0.000    -.7175157   -.4531987
+                  has_cellphone |  -.0802033   .0289303    -2.77   0.006    -.1369056    -.023501
+                  used_internet |   -.641594   .0531728   -12.07   0.000    -.7458107   -.5373773
+                  not_feel_poor |  -.7563035   .0955712    -7.91   0.000    -.9436197   -.5689873
+                          _cons |   1.830501     .20065     9.12   0.000     1.437234    2.223767
+-------------------------------------------------------------------------------------------------
+
+. eststo pint3
+
+. 
+. probit `yvar' i.`mainx'##i.not_feel_poor ///
+>     `program_controls' `info_controls' govt_satisfaction, vce(robust)
+
+Iteration 0:   log pseudolikelihood = -7410.0443  
+Iteration 1:   log pseudolikelihood = -6406.8424  
+Iteration 2:   log pseudolikelihood = -6396.7227  
+Iteration 3:   log pseudolikelihood = -6396.6968  
+Iteration 4:   log pseudolikelihood = -6396.6968  
+
+Probit regression                               Number of obs     =     11,449
+                                                Wald chi2(17)     =    1388.42
+                                                Prob > chi2       =     0.0000
+Log pseudolikelihood = -6396.6968               Pseudo R2         =     0.1368
+
+-------------------------------------------------------------------------------------------
+                          |               Robust
+               bdh_takeup |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+--------------------------+----------------------------------------------------------------
+              low_density |
+      Low-density parish  |  -.1925054   .0446336    -4.31   0.000    -.2799857   -.1050251
+          1.not_feel_poor |  -.7460238   .1056075    -7.06   0.000    -.9530107    -.539037
+                          |
+low_density#not_feel_poor |
+    Low-density parish#1  |  -.0437864   .2464104    -0.18   0.859    -.5267418     .439169
+                          |
+          log_consumption |  -.4228918   .0436514    -9.69   0.000    -.5084469   -.3373367
+       log_household_size |   .0479406   .0351119     1.37   0.172    -.0208774    .1167586
+            school_member |   .6398976   .0367833    17.40   0.000     .5678038    .7119915
+           elderly_member |   1.015195   .0507282    20.01   0.000     .9157698    1.114621
+          disabled_member |   .6914412   .0711297     9.72   0.000     .5520295    .8308529
+     elderly_disqualified |  -.0165667   .0778599    -0.21   0.832    -.1691693    .1360358
+    disabled_disqualified |  -.0267632   .1290064    -0.21   0.836    -.2796112    .2260848
+           head_school4up |  -.1013173    .027684    -3.66   0.000    -.1555769   -.0470577
+          indigenous_only |   .1460268   .1295285     1.13   0.260    -.1078443     .399898
+          spent_documents |   .0567015    .034498     1.64   0.100    -.0109134    .1243163
+         birth_attendance |  -.5864185   .0675739    -8.68   0.000     -.718861    -.453976
+            has_cellphone |  -.0803521   .0289316    -2.78   0.005     -.137057   -.0236471
+            used_internet |   -.641002   .0531364   -12.06   0.000    -.7451476   -.5368565
+        govt_satisfaction |    .039747   .0054924     7.24   0.000      .028982     .050512
+                    _cons |   1.826368     .20067     9.10   0.000     1.433062    2.219674
+-------------------------------------------------------------------------------------------
+
+. eststo pint4
+
+. 
+. esttab pint1 pint2 pint3 pint4 using "`tabledir'\table3_probit_interactions.rtf", replace ///
+>     se star(* 0.10 ** 0.05 *** 0.01) ///
+>     title("Table 3: Probit Models with Interaction Terms") ///
+>     mtitles("Density x Cellphone" "Density x Internet" "Density x Govt Satisfaction" "Density x Not Feel Poor") ///
+>     label compress ///
+>     stats(N r2_p, labels("Observations" "Pseudo R-squared"))
+(output written to C:\Users\radha\Downloads\econ644_output\tables\table3_probit_interactions.rtf)
+
+. 
+. *---------------------------------------------------*
+. * TABLE 4: FULL PROBIT MODEL WITH MFX
+. *---------------------------------------------------*
+. 
+. probit `yvar' `mainx' `program_controls' `info_controls' `psych_controls', vce(robust)
+
+Iteration 0:   log pseudolikelihood = -7410.0443  
+Iteration 1:   log pseudolikelihood = -6406.8331  
+Iteration 2:   log pseudolikelihood =  -6396.739  
+Iteration 3:   log pseudolikelihood = -6396.7132  
+Iteration 4:   log pseudolikelihood = -6396.7132  
+
+Probit regression                               Number of obs     =     11,449
+                                                Wald chi2(16)     =    1387.67
+                                                Prob > chi2       =     0.0000
+Log pseudolikelihood = -6396.7132               Pseudo R2         =     0.1368
+
+---------------------------------------------------------------------------------------
+                      |               Robust
+           bdh_takeup |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+----------------------+----------------------------------------------------------------
+          low_density |  -.1934475   .0443999    -4.36   0.000    -.2804697   -.1064253
+      log_consumption |  -.4227775    .043629    -9.69   0.000    -.5082887   -.3372663
+   log_household_size |    .047996   .0351069     1.37   0.172    -.0208123    .1168042
+        school_member |   .6398675   .0367863    17.39   0.000     .5677676    .7119673
+       elderly_member |   1.015326    .050718    20.02   0.000     .9159201    1.114731
+      disabled_member |   .6915134   .0711331     9.72   0.000     .5520951    .8309316
+ elderly_disqualified |  -.0165189   .0778645    -0.21   0.832    -.1691306    .1360928
+disabled_disqualified |  -.0268774   .1289915    -0.21   0.835    -.2796961    .2259413
+       head_school4up |  -.1012258   .0276838    -3.66   0.000     -.155485   -.0469666
+      indigenous_only |   .1460387   .1295041     1.13   0.259    -.1077847     .399862
+      spent_documents |   .0566911   .0344986     1.64   0.100     -.010925    .1243071
+     birth_attendance |  -.5859559   .0674114    -8.69   0.000    -.7180799   -.4538319
+        has_cellphone |  -.0802759   .0289273    -2.78   0.006    -.1369724   -.0235794
+        used_internet |  -.6412627   .0531688   -12.06   0.000    -.7454715   -.5370538
+        not_feel_poor |  -.7548874   .0955088    -7.90   0.000    -.9420813   -.5676935
+    govt_satisfaction |     .03972   .0054909     7.23   0.000      .028958    .0504821
+                _cons |   1.825629   .2004454     9.11   0.000     1.432763    2.218494
+---------------------------------------------------------------------------------------
+
+. 
+. mfx compute, predict(p)
+
+Marginal effects after probit
+      y  = Pr(bdh_takeup) (predict, p)
+         =  .67568677
+------------------------------------------------------------------------------
+variable |      dy/dx    Std. Err.     z    P>|z|  [    95% C.I.   ]      X
+---------+--------------------------------------------------------------------
+low_de~y*|  -.0715985      .01684   -4.25   0.000  -.104603 -.038594   .128658
+log_co~n |  -.1520318      .01563   -9.73   0.000  -.182667 -.121397   4.19979
+log_ho~e |   .0172595      .01262    1.37   0.171  -.007475  .041994   1.43975
+school~r*|   .2387705      .01381   17.29   0.000   .211711   .26583   .710018
+elderl~r*|   .3001016      .01109   27.06   0.000   .278369  .321835   .210586
+disabl~r*|   .2075139      .01641   12.65   0.000   .175358   .23967   .084986
+elderl~d*|  -.0059597      .02818   -0.21   0.833  -.061196  .049277   .061141
+disabl~d*|  -.0097207      .04691   -0.21   0.836  -.101668  .082227   .023408
+head_s~p*|  -.0362308      .00986   -3.67   0.000  -.055557 -.016904   .593414
+indige~y*|   .0506827       .0432    1.17   0.241  -.033997  .135362   .013626
+spent_~s*|   .0202091      .01219    1.66   0.097  -.003674  .044092   .172766
+birth_~e |  -.2107111      .02419   -8.71   0.000  -.258128 -.163295   .821806
+has_ce~e*|  -.0287674      .01033   -2.78   0.005  -.049014 -.008521   .588436
+used_i~t*|  -.2478503      .02087  -11.88   0.000   -.28875  -.20695   .061053
+not_fe~r*|  -.2929731      .03654   -8.02   0.000  -.364585 -.221362   .018168
+govt_s~n |   .0142834      .00197    7.23   0.000   .010414  .018153   6.69875
+------------------------------------------------------------------------------
+(*) dy/dx is for discrete change of dummy variable from 0 to 1
+
+. 
+. margins, dydx(*) post
+
+Average marginal effects                        Number of obs     =     11,449
+Model VCE    : Robust
+
+Expression   : Pr(bdh_takeup), predict()
+dy/dx w.r.t. : low_density log_consumption log_household_size school_member elderly_member disabled_member
+               elderly_disqualified disabled_disqualified head_school4up indigenous_only spent_documents
+               birth_attendance has_cellphone used_internet not_feel_poor govt_satisfaction
+
+---------------------------------------------------------------------------------------
+                      |            Delta-method
+                      |      dy/dx   Std. Err.      z    P>|z|     [95% Conf. Interval]
+----------------------+----------------------------------------------------------------
+          low_density |  -.0616553   .0141217    -4.37   0.000    -.0893333   -.0339774
+      log_consumption |  -.1347471   .0136814    -9.85   0.000    -.1615621    -.107932
+   log_household_size |   .0152972   .0111841     1.37   0.171    -.0066233    .0372177
+        school_member |   .2039377   .0111677    18.26   0.000     .1820495    .2258259
+       elderly_member |   .3236032    .015085    21.45   0.000     .2940372    .3531692
+      disabled_member |   .2203982   .0223245     9.87   0.000      .176643    .2641534
+ elderly_disqualified |  -.0052649   .0248171    -0.21   0.832    -.0539056    .0433758
+disabled_disqualified |  -.0085663   .0411092    -0.21   0.835    -.0891388    .0720062
+       head_school4up |  -.0322625   .0088112    -3.66   0.000    -.0495322   -.0149928
+      indigenous_only |   .0465452   .0412723     1.13   0.259    -.0343471    .1274376
+      spent_documents |   .0180685   .0109894     1.64   0.100    -.0034703    .0396073
+     birth_attendance |  -.1867551   .0212486    -8.79   0.000    -.2284016   -.1451085
+        has_cellphone |  -.0255854   .0092147    -2.78   0.005    -.0436459    -.007525
+        used_internet |  -.2043823   .0166544   -12.27   0.000    -.2370244   -.1717403
+        not_feel_poor |  -.2405967   .0301826    -7.97   0.000    -.2997534   -.1814399
+    govt_satisfaction |   .0126595   .0017387     7.28   0.000     .0092518    .0160672
+---------------------------------------------------------------------------------------
+
+. eststo mfx_full
+
+. 
+. esttab mfx_full using "`tabledir'\table4_full_probit_mfx.rtf", replace ///
+>     se star(* 0.10 ** 0.05 *** 0.01) ///
+>     title("Table 4: Marginal Effects from Full Probit Model") ///
+>     label compress ///
+>     stats(N, labels("Observations"))
+(output written to C:\Users\radha\Downloads\econ644_output\tables\table4_full_probit_mfx.rtf)
+
+. 
+. *---------------------------------------------------*
+. * DESCRIPTIVE STATISTICS: DEPENDENT VARIABLE
+. *---------------------------------------------------*
+. 
+. use "`outdir'\temp_file.dta", clear
+
+. 
+. summarize bdh_takeup, detail
+
+                   BDH takeup in Oct. 2013
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%            0              0
+ 5%            0              0
+10%            0              0       Obs              11,449
+25%            0              0       Sum of Wgt.      11,449
+
+50%            1                      Mean           .6503625
+                        Largest       Std. Dev.      .4768763
+75%            1              1
+90%            1              1       Variance        .227411
+95%            1              1       Skewness      -.6306417
+99%            1              1       Kurtosis       1.397709
+
+. 
+. 
+. graph bar (count), over(bdh_takeup) ///
+>     title("Dependent Variable: BDH Takeup in October 2013", size(medium)) ///
+>     subtitle("Number of households receiving and not receiving BDH", size(small)) ///
+>     ytitle("Number of households", size(medsmall)) ///
+>     blabel(bar, format(%9.0f)) ///
+>     legend(off) ///
+>     graphregion(color(white)) plotregion(color(white))
+
+. 
+. graph export "`graphdir'\bdhoct13_histogram.png", replace width(2600)
+(file C:\Users\radha\Downloads\econ644_output\graphs\bdhoct13_histogram.png written in PNG format)
+
+. 
+. summ bdh_takeup
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+  bdh_takeup |     11,449    .6503625    .4768763          0          1
+
+. 
+. *---------------------------------------------------*
+. * DESCRIPTIVE STATISTICS: MAIN EXPLANATORY VARIABLE
+. *---------------------------------------------------*
+. 
+. summarize parish_density, detail
+
+                  Parish population density
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%     1.203177        .326224
+ 5%     4.372236        .326224
+10%     7.336951        .326224       Obs              11,449
+25%     24.00498        .326224       Sum of Wgt.      11,449
+
+50%     70.43783                      Mean           382.6661
+                        Largest       Std. Dev.      847.9505
+75%     307.9763       4701.629
+90%     918.7196       4701.629       Variance         719020
+95%      2297.63       4701.629       Skewness       3.665096
+99%     4347.985       4701.629       Kurtosis       16.65404
+
+. summarize low_density, detail
+
+            Low population density (<10/sq. km.)
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%            0              0
+ 5%            0              0
+10%            0              0       Obs              11,449
+25%            0              0       Sum of Wgt.      11,449
+
+50%            0                      Mean           .1286575
+                        Largest       Std. Dev.      .3348351
+75%            0              1
+90%            1              1       Variance       .1121146
+95%            1              1       Skewness       2.218159
+99%            1              1       Kurtosis       5.920227
+
+. 
+. histogram parish_density if parish_density <= 500, ///
+>     frequency width(10) ///
+>     color(black) lcolor(white) lwidth(vthin) ///
+>     xline(10, lcolor(maroon) lwidth(medthick) lpattern(dash)) ///
+>     title("Parish Population Density as Continuous Variable", size(medium)) ///
+>     subtitle("Households in parishes below 500 persons/km{superscript:2}; dashed line = 10 cutoff", size(small)) ///
+>     xtitle("Parish population density (persons per km{superscript:2})", size(medsmall)) ///
+>     ytitle("Number of households", size(medsmall)) ///
+>     note("Low-density parish is defined as fewer than 10 persons/km{superscript:2}.", size(vsmall)) ///
+>     graphregion(color(white)) plotregion(color(white))
+(bin=47, start=.32622404, width=10)
+
+. 
+. graph export "`graphdir'\densidad_histogram.png", replace width(2600)
+(file C:\Users\radha\Downloads\econ644_output\graphs\densidad_histogram.png written in PNG format)
+
+. 
+. histogram low_density, discrete frequency ///
+>     start(-.5) width(1) ///
+>     xlabel(0 "Higher-density parish" 1 "Low-density parish", labsize(small)) ///
+>     color(navy) lcolor(white) ///
+>     title("Main Explanatory Variable: Low-Density Parish Indicator", size(medium)) ///
+>     subtitle("Binary version of parish density used in regressions", size(small)) ///
+>     xtitle("Parish density category", size(medsmall)) ///
+>     ytitle("Number of households", size(medsmall)) ///
+>     note("low_density = 1 if parish density is below 10 persons/km{superscript:2}.", size(vsmall)) ///
+>     graphregion(color(white)) plotregion(color(white))
+(start=-.5, width=1)
+
+. 
+. graph export "`graphdir'\densidad10_histogram.png", replace width(2600)
+(file C:\Users\radha\Downloads\econ644_output\graphs\densidad10_histogram.png written in PNG format)
+
+. 
+. summ low_density
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+ low_density |     11,449    .1286575    .3348351          0          1
+
+. 
+. *---------------------------------------------------*
+. * DESCRIPTIVE STATISTICS: RELATIONSHIP BETWEEN BDH TAKEUP AND DENSITY
+. *---------------------------------------------------*
+. 
+. preserve
+
+. 
+. collapse (mean) mean_takeup=bdh_takeup, by(low_density)
+
+. gen mean_takeup_pct = mean_takeup * 100
+
+. 
+. graph hbar mean_takeup_pct, over(low_density, label(labsize(small))) ///
+>     blabel(bar, format(%4.1f) position(outside) color(black)) ///
+>     bar(1, color(navy)) ///
+>     title("BDH Takeup by Parish Density Category", size(medium)) ///
+>     subtitle("Mean BDH takeup by low-density indicator", size(small)) ///
+>     ytitle("Households receiving BDH (%)", size(medsmall)) ///
+>     note("low_density = 1 if parish density is below 10 persons/km{superscript:2}.", size(vsmall)) ///
+>     legend(off) graphregion(color(white)) plotregion(color(white))
+
+. 
+. graph export "`graphdir'\bdh_takeup_by_low_density.png", replace width(2600)
+(file C:\Users\radha\Downloads\econ644_output\graphs\bdh_takeup_by_low_density.png written in PNG format)
+
+. 
+. restore
+
+. 
+. *---------------------------------------------------*
+. * PROGRAM CONTROL VARIABLES AMONG NON-BDH HOUSEHOLDS
+. *---------------------------------------------------*
+. 
+. use "`outdir'\temp_file.dta", clear
+
+. 
+. preserve
+
+. 
+. keep if bdh_takeup == 0
+(7,446 observations deleted)
+
+. count
+  4,003
+
+. local n_nobdh = r(N)
+
+. 
+. collapse (mean) school_member elderly_member disabled_member ///
+>                 elderly_disqualified disabled_disqualified ///
+>                 head_school4up indigenous_only spent_documents
+
+. 
+. xpose, clear varname
+
+. 
+. rename v1 share
+
+. rename _varname oldname
+
+. 
+. replace share = share * 100
+(8 real changes made)
+
+. 
+. gen str45 varname = ""
+(8 missing values generated)
+
+. 
+. replace varname = "School-going member" if oldname == "school_member"
+(1 real change made)
+
+. replace varname = "Age 65+ member" if oldname == "elderly_member"
+(1 real change made)
+
+. replace varname = "Disabled member" if oldname == "disabled_member"
+(1 real change made)
+
+. replace varname = "Age 65+ DQ" if oldname == "elderly_disqualified"
+(1 real change made)
+
+. replace varname = "Disabled DQ" if oldname == "disabled_disqualified"
+(1 real change made)
+
+. replace varname = "HH head 4+ years schooling" if oldname == "head_school4up"
+(1 real change made)
+
+. replace varname = "Indigenous only" if oldname == "indigenous_only"
+(1 real change made)
+
+. replace varname = "Spent on documents" if oldname == "spent_documents"
+(1 real change made)
+
+. 
+. graph hbar share, over(varname, sort(1) descending label(labsize(small))) ///
+>     blabel(bar, format(%4.1f) position(outside) color(black)) ///
+>     bar(1, color(navy)) ///
+>     title("Binary Program Controls Among Non-BDH Households", size(medium)) ///
+>     subtitle("Percentage of non-recipient households with each characteristic", size(small)) ///
+>     ytitle("Share of households not receiving BDH (%)", size(medsmall)) ///
+>     note("Sample: `n_nobdh' households that did not receive BDH.", size(vsmall)) ///
+>     legend(off) graphregion(color(white)) plotregion(color(white))
+
+. 
+. graph export "`graphdir'\controls_program_binary_no_bdh.png", replace width(2800)
+(file C:\Users\radha\Downloads\econ644_output\graphs\controls_program_binary_no_bdh.png written in PNG format)
+
+. 
+. restore
+
+. 
+. 
+. *---------------------------------------------------*
+. * INFORMATIONAL AND PSYCHOLOGICAL CONTROLS AMONG NON-BDH HOUSEHOLDS
+. *---------------------------------------------------*
+. 
+. use "`outdir'\temp_file.dta", clear
+
+. 
+. preserve
+
+. 
+. keep if bdh_takeup == 0
+(7,446 observations deleted)
+
+. drop if missing(has_cellphone)
+(0 observations deleted)
+
+. count
+  4,003
+
+. local n_nobdh = r(N)
+
+. 
+. contract has_cellphone
+
+. rename _freq n
+
+. egen total = total(n)
+
+. gen pct = 100 * n / total
+
+. 
+. label define celllbl 0 "No cellphone" 1 "Has cellphone", replace
+
+. label values has_cellphone celllbl
+
+. 
+. graph bar pct, over(has_cellphone, label(labsize(small))) ///
+>     blabel(bar, format(%4.1f) color(black)) ///
+>     bar(1, color(navy)) ///
+>     title("Cellphone Access", size(medium)) ///
+>     subtitle("Among non-BDH households", size(small)) ///
+>     ytitle("Percent of households", size(small)) ///
+>     ylabel(0(20)100, labsize(small)) ///
+>     note("Sample: `n_nobdh' households not receiving BDH.", size(vsmall)) ///
+>     legend(off) graphregion(color(white)) plotregion(color(white)) ///
+>     name(g_cellphone_desc, replace)
+
+. 
+. graph export "`graphdir'\desc_cellphone_no_bdh.png", replace width(2200)
+(file C:\Users\radha\Downloads\econ644_output\graphs\desc_cellphone_no_bdh.png written in PNG format)
+
+. 
+. restore
+
+. 
+. preserve
+
+. 
+. keep if bdh_takeup == 0
+(7,446 observations deleted)
+
+. drop if missing(used_internet)
+(0 observations deleted)
+
+. count
+  4,003
+
+. local n_nobdh = r(N)
+
+. 
+. contract used_internet
+
+. rename _freq n
+
+. egen total = total(n)
+
+. gen pct = 100 * n / total
+
+. 
+. label define internetlbl 0 "No internet" 1 "Has internet", replace
+
+. label values used_internet internetlbl
+
+. 
+. graph bar pct, over(used_internet, label(labsize(small))) ///
+>     blabel(bar, format(%4.1f) color(black)) ///
+>     bar(1, color(green)) ///
+>     title("Internet Access", size(medium)) ///
+>     subtitle("Among non-BDH households", size(small)) ///
+>     ytitle("Percent of households", size(small)) ///
+>     ylabel(0(20)100, labsize(small)) ///
+>     note("Sample: `n_nobdh' households not receiving BDH.", size(vsmall)) ///
+>     legend(off) graphregion(color(white)) plotregion(color(white)) ///
+>     name(g_internet_desc, replace)
+
+. 
+. graph export "`graphdir'\desc_internet_no_bdh.png", replace width(2200)
+(file C:\Users\radha\Downloads\econ644_output\graphs\desc_internet_no_bdh.png written in PNG format)
+
+. 
+. restore
+
+. 
+. preserve
+
+. 
+. keep if bdh_takeup == 0
+(7,446 observations deleted)
+
+. drop if missing(govt_satisfaction)
+(0 observations deleted)
+
+. count
+  4,003
+
+. local n_nobdh = r(N)
+
+. 
+. contract govt_satisfaction
+
+. rename _freq n
+
+. egen total = total(n)
+
+. gen pct = 100 * n / total
+
+. 
+. graph bar pct, over(govt_satisfaction, label(labsize(vsmall))) ///
+>     blabel(bar, format(%4.1f) color(black) size(vsmall)) ///
+>     bar(1, color(maroon)) ///
+>     title("Government Satisfaction", size(medium)) ///
+>     subtitle("Original 1-10 score among non-BDH households", size(small)) ///
+>     ytitle("Percent of households", size(small)) ///
+>     ylabel(0(5)25, labsize(small)) ///
+>     note("Sample: `n_nobdh' households not receiving BDH.", size(vsmall)) ///
+>     legend(off) graphregion(color(white)) plotregion(color(white)) ///
+>     name(g_satisgovt_desc, replace)
+
+. 
+. graph export "`graphdir'\desc_satisgovt_no_bdh.png", replace width(2200)
+(file C:\Users\radha\Downloads\econ644_output\graphs\desc_satisgovt_no_bdh.png written in PNG format)
+
+. 
+. restore
+
+. 
+. preserve
+
+. 
+. keep if bdh_takeup == 0
+(7,446 observations deleted)
+
+. drop if missing(not_feel_poor)
+(0 observations deleted)
+
+. count
+  4,003
+
+. local n_nobdh = r(N)
+
+. 
+. contract not_feel_poor
+
+. rename _freq n
+
+. egen total = total(n)
+
+. gen pct = 100 * n / total
+
+. 
+. label define poorlbl 0 "Does not report non-poor" 1 "Reports not feeling poor", replace
+
+. label values not_feel_poor poorlbl
+
+. 
+. graph bar pct, over(not_feel_poor, label(labsize(small))) ///
+>     blabel(bar, format(%4.1f) color(black)) ///
+>     bar(1, color(maroon)) ///
+>     title("Self-Perceived Poverty", size(medium)) ///
+>     subtitle("Among non-BDH households", size(small)) ///
+>     ytitle("Percent of households", size(small)) ///
+>     ylabel(0(20)100, labsize(small)) ///
+>     note("Sample: `n_nobdh' households not receiving BDH.", size(vsmall)) ///
+>     legend(off) graphregion(color(white)) plotregion(color(white)) ///
+>     name(g_nofeelpoor_desc, replace)
+
+. 
+. graph export "`graphdir'\desc_nofeelpoor_no_bdh.png", replace width(2200)
+(file C:\Users\radha\Downloads\econ644_output\graphs\desc_nofeelpoor_no_bdh.png written in PNG format)
+
+. 
+. restore
+
+. 
+. graph combine g_cellphone_desc g_internet_desc ///
+>               g_satisgovt_desc g_nofeelpoor_desc, ///
+>               cols(2) ///
+>               title("Information and Psychological Controls Among Non-BDH Households", size(medium)) ///
+>               subtitle("Descriptive distributions for key control variables", size(small)) ///
+>               graphregion(color(white)) ///
+>               name(g_info_psych_panel, replace)
+
+. 
+. graph export "`graphdir'\desc_info_psych_panel_no_bdh.png", replace width(3200)
+(file C:\Users\radha\Downloads\econ644_output\graphs\desc_info_psych_panel_no_bdh.png written in PNG format)
+
+. 
+. 
+. *---------------------------------------------------*
+. * MARGINS FROM FULL PROBIT MODEL
+. *---------------------------------------------------*
+. 
+. * margins predicts BDH takeup at the specified value of one variable while keeping 
+. *all other controls at their observed household values, then averages the predicted probabilities across the sample.
+. 
+. use "`outdir'\temp_file.dta", clear
+
+. 
+. local yvar bdh_takeup
+
+. local mainx low_density
+
+. 
+. local program_controls log_consumption log_household_size school_member elderly_member disabled_member ///
+>                        elderly_disqualified disabled_disqualified head_school4up ///
+>                        indigenous_only spent_documents birth_attendance
+
+. 
+. local info_controls has_cellphone used_internet
+
+. local psych_controls not_feel_poor govt_satisfaction
+
+. 
+. probit `yvar' `mainx' `program_controls' `info_controls' `psych_controls', vce(robust)
+
+Iteration 0:   log pseudolikelihood = -7410.0443  
+Iteration 1:   log pseudolikelihood = -6406.8331  
+Iteration 2:   log pseudolikelihood =  -6396.739  
+Iteration 3:   log pseudolikelihood = -6396.7132  
+Iteration 4:   log pseudolikelihood = -6396.7132  
+
+Probit regression                               Number of obs     =     11,449
+                                                Wald chi2(16)     =    1387.67
+                                                Prob > chi2       =     0.0000
+Log pseudolikelihood = -6396.7132               Pseudo R2         =     0.1368
+
+---------------------------------------------------------------------------------------
+                      |               Robust
+           bdh_takeup |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+----------------------+----------------------------------------------------------------
+          low_density |  -.1934475   .0443999    -4.36   0.000    -.2804697   -.1064253
+      log_consumption |  -.4227775    .043629    -9.69   0.000    -.5082887   -.3372663
+   log_household_size |    .047996   .0351069     1.37   0.172    -.0208123    .1168042
+        school_member |   .6398675   .0367863    17.39   0.000     .5677676    .7119673
+       elderly_member |   1.015326    .050718    20.02   0.000     .9159201    1.114731
+      disabled_member |   .6915134   .0711331     9.72   0.000     .5520951    .8309316
+ elderly_disqualified |  -.0165189   .0778645    -0.21   0.832    -.1691306    .1360928
+disabled_disqualified |  -.0268774   .1289915    -0.21   0.835    -.2796961    .2259413
+       head_school4up |  -.1012258   .0276838    -3.66   0.000     -.155485   -.0469666
+      indigenous_only |   .1460387   .1295041     1.13   0.259    -.1077847     .399862
+      spent_documents |   .0566911   .0344986     1.64   0.100     -.010925    .1243071
+     birth_attendance |  -.5859559   .0674114    -8.69   0.000    -.7180799   -.4538319
+        has_cellphone |  -.0802759   .0289273    -2.78   0.006    -.1369724   -.0235794
+        used_internet |  -.6412627   .0531688   -12.06   0.000    -.7454715   -.5370538
+        not_feel_poor |  -.7548874   .0955088    -7.90   0.000    -.9420813   -.5676935
+    govt_satisfaction |     .03972   .0054909     7.23   0.000      .028958    .0504821
+                _cons |   1.825629   .2004454     9.11   0.000     1.432763    2.218494
+---------------------------------------------------------------------------------------
+
+. 
+. capture estimates drop full_probit_for_margins
+
+. estimates store full_probit_for_margins
+
+. 
+. estimates restore full_probit_for_margins
+(results full_probit_for_margins are active now)
+
+. 
+. tempfile m_internet
+
+. 
+. *
+. margins, at(used_internet=(0 1)) saving("`m_internet'", replace)
+
+Predictive margins                              Number of obs     =     11,449
+Model VCE    : Robust
+
+Expression   : Pr(bdh_takeup), predict()
+
+1._at        : used_inter~t    =           0
+
+2._at        : used_inter~t    =           1
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |     Margin   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         _at |
+          1  |   .6628811   .0042368   156.46   0.000      .654577    .6711851
+          2  |   .4446744   .0177829    25.01   0.000     .4098205    .4795282
+------------------------------------------------------------------------------
+(note: file C:\Users\radha\AppData\Local\Temp\ST_01000007.tmp not found)
+
+. 
+. preserve
+
+. use "`m_internet'", clear
+(Created by command margins; also see char list)
+
+. 
+. gen group = _n
+
+. gen pct = 100 * _margin
+
+. gen lb = 100 * _ci_lb
+
+. gen ub = 100 * _ci_ub
+
+. gen pct_label = string(pct, "%4.1f") + "%"
+
+. 
+. twoway ///
+>     (bar pct group, horizontal barwidth(0.55) color(green)) ///
+>     (rcap ub lb group, horizontal lcolor(black) lwidth(medium)) ///
+>     (scatter group pct, msymbol(none) mlabel(pct_label) mlabposition(3) ///
+>         mlabcolor(black) mlabsize(small)), ///
+>     yscale(reverse range(.5 2.5)) ///
+>     ylabel(1 "No internet" 2 "Has internet", angle(0) labsize(small)) ///
+>     xlabel(0(20)80, labsize(medium)) ///
+>     xscale(range(0 85)) ///
+>     xtitle("") ///
+>     ytitle("") ///
+>     title("Internet Access", size(medsmall)) ///
+>     legend(off) ///
+>     graphregion(color(white) margin(small)) ///
+>     plotregion(color(white)) ///
+>     name(g_internet_margins, replace)
+
+. 
+. restore
+
+. 
+. estimates restore full_probit_for_margins
+(results full_probit_for_margins are active now)
+
+. 
+. tempfile m_cellphone
+
+. margins, at(has_cellphone=(0 1)) saving("`m_cellphone'", replace)
+
+Predictive margins                              Number of obs     =     11,449
+Model VCE    : Robust
+
+Expression   : Pr(bdh_takeup), predict()
+
+1._at        : has_cellph~e    =           0
+
+2._at        : has_cellph~e    =           1
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |     Margin   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         _at |
+          1  |   .6648205   .0069487    95.68   0.000     .6512012    .6784397
+          2  |   .6392144   .0054506   117.27   0.000     .6285314    .6498975
+------------------------------------------------------------------------------
+(note: file C:\Users\radha\AppData\Local\Temp\ST_01000009.tmp not found)
+
+. 
+. preserve
+
+. use "`m_cellphone'", clear
+(Created by command margins; also see char list)
+
+. 
+. gen group = _n
+
+. gen pct = 100 * _margin
+
+. gen lb = 100 * _ci_lb
+
+. gen ub = 100 * _ci_ub
+
+. gen pct_label = string(pct, "%4.1f") + "%"
+
+. 
+. twoway ///
+>     (bar pct group, horizontal barwidth(0.55) color(navy)) ///
+>     (rcap ub lb group, horizontal lcolor(black) lwidth(medium)) ///
+>     (scatter group pct, msymbol(none) mlabel(pct_label) mlabposition(3) ///
+>         mlabcolor(black) mlabsize(small)), ///
+>     yscale(reverse range(.5 2.5)) ///
+>     ylabel(1 "No cellphone" 2 "Has cellphone", angle(0) labsize(small)) ///
+>     xlabel(0(20)80, labsize(medium)) ///
+>     xscale(range(0 85)) ///
+>     xtitle("") ///
+>     ytitle("") ///
+>     title("Cellphone Access", size(medsmall)) ///
+>     legend(off) ///
+>     graphregion(color(white) margin(small)) ///
+>     plotregion(color(white)) ///
+>     name(g_cellphone_margins, replace)
+
+. 
+. restore
+
+. 
+. estimates restore full_probit_for_margins
+(results full_probit_for_margins are active now)
+
+. 
+. tempfile m_satisgovt
+
+. margins, at(govt_satisfaction=(1 5 10)) saving("`m_satisgovt'", replace)
+
+Predictive margins                              Number of obs     =     11,449
+Model VCE    : Robust
+
+Expression   : Pr(bdh_takeup), predict()
+
+1._at        : govt_satis~n    =           1
+
+2._at        : govt_satis~n    =           5
+
+3._at        : govt_satis~n    =          10
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |     Margin   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         _at |
+          1  |   .5749209   .0113067    50.85   0.000     .5527602    .5970816
+          2  |   .6276977   .0051031   123.00   0.000     .6176958    .6376997
+          3  |   .6904323   .0068161   101.29   0.000      .677073    .7037916
+------------------------------------------------------------------------------
+(note: file C:\Users\radha\AppData\Local\Temp\ST_0100000b.tmp not found)
+
+. 
+. preserve
+
+. use "`m_satisgovt'", clear
+(Created by command margins; also see char list)
+
+. 
+. gen group = _n
+
+. gen pct = 100 * _margin
+
+. gen lb = 100 * _ci_lb
+
+. gen ub = 100 * _ci_ub
+
+. gen pct_label = string(pct, "%4.1f") + "%"
+
+. 
+. twoway ///
+>     (bar pct group, horizontal barwidth(0.55) color(maroon)) ///
+>     (rcap ub lb group, horizontal lcolor(black) lwidth(medium)) ///
+>     (scatter group pct, msymbol(none) mlabel(pct_label) mlabposition(3) ///
+>         mlabcolor(black) mlabsize(small)), ///
+>     yscale(reverse range(.5 3.5)) ///
+>     ylabel(1 "Low (1)" 2 "Medium (5)" 3 "High (10)", angle(0) labsize(small)) ///
+>     xlabel(0(20)80, labsize(medium)) ///
+>     xscale(range(0 85)) ///
+>     xtitle("") ///
+>     ytitle("") ///
+>     title("Government Satisfaction", size(medsmall)) ///
+>     legend(off) ///
+>     graphregion(color(white) margin(small)) ///
+>     plotregion(color(white)) ///
+>     name(g_satisgovt_margins, replace)
+
+. 
+. restore
+
+. 
+. estimates restore full_probit_for_margins
+(results full_probit_for_margins are active now)
+
+. 
+. tempfile m_nofeelpoor
+
+. margins, at(not_feel_poor=(0 1)) saving("`m_nofeelpoor'", replace)
+
+Predictive margins                              Number of obs     =     11,449
+Model VCE    : Robust
+
+Expression   : Pr(bdh_takeup), predict()
+
+1._at        : not_feel_p~r    =           0
+
+2._at        : not_feel_p~r    =           1
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |     Margin   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         _at |
+          1  |   .6535801   .0041143   158.86   0.000     .6455163     .661644
+          2  |   .3995553   .0312557    12.78   0.000     .3382951    .4608154
+------------------------------------------------------------------------------
+(note: file C:\Users\radha\AppData\Local\Temp\ST_0100000d.tmp not found)
+
+. 
+. preserve
+
+. use "`m_nofeelpoor'", clear
+(Created by command margins; also see char list)
+
+. 
+. gen group = _n
+
+. gen pct = 100 * _margin
+
+. gen lb = 100 * _ci_lb
+
+. gen ub = 100 * _ci_ub
+
+. gen pct_label = string(pct, "%4.1f") + "%"
+
+. 
+. twoway ///
+>     (bar pct group, horizontal barwidth(0.55) color(maroon)) ///
+>     (rcap ub lb group, horizontal lcolor(black) lwidth(medium)) ///
+>     (scatter group pct, msymbol(none) mlabel(pct_label) mlabposition(3) ///
+>         mlabcolor(black) mlabsize(small)), ///
+>     yscale(reverse range(.5 2.5)) ///
+>     ylabel(1 "Feels poor" 2 "Does not feel poor", angle(0) labsize(small)) ///
+>     xlabel(0(20)80, labsize(medium)) ///
+>     xscale(range(0 85)) ///
+>     xtitle("") ///
+>     ytitle("") ///
+>     title("Self-Perceived Poverty", size(medsmall)) ///
+>     legend(off) ///
+>     graphregion(color(white) margin(small)) ///
+>     plotregion(color(white)) ///
+>     name(g_nofeelpoor_margins, replace)
+
+. 
+. restore
+
+. 
+. graph combine ///
+>     g_internet_margins ///
+>     g_cellphone_margins ///
+>     g_satisgovt_margins ///
+>     g_nofeelpoor_margins, ///
+>     cols(2) ///
+>     imargin(medium) ///
+>     title("Predicted BDH Takeup from Full Probit Model", size(medium)) ///
+>     subtitle("Predicted probabilities from margins; capped lines show 95% confidence intervals", size(small)) ///
+>     graphregion(color(white)) ///
+>     name(g_margins_panel_clean, replace)
+
+. 
+. graph export "`graphdir'\margins_panel_full_probit_clean.png", replace width(4200)
+(file C:\Users\radha\Downloads\econ644_output\graphs\margins_panel_full_probit_clean.png written in PNG format)
+
+. 
+. log close
+      name:  <unnamed>
+       log:  C:\Users\radha\Downloads\econ644_output\644project_BDHtakeup.log
+  log type:  text
+ closed on:   3 May 2026, 16:20:00
+------------------------------------------------------------------------------------------------------------------------
