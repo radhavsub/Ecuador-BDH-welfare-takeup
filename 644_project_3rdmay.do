@@ -1,8 +1,10 @@
+
 *--------------------------------------------------*
 * ECON 644 PROJECT
-* Dilnaz and Radha
+*Radha V
 *--------------------------------------------------*
 
+*"This do-file replicates and extends Rinehart & McGuire (2017) using Ecuador's BDH household survey (N=11,449). It constructs derived variables, runs OLS and probit models with incrementing controls, computes marginal effects, and produces descriptive figures. Analytical design, variable construction, and regression strategy are entirely my own. AI was used to assist with Excel export loop syntax and graph formatting boilerplate (~10% of code)."
 clear all
 set more off
 capture log close
@@ -11,8 +13,8 @@ capture log close
 * SET PATHS
 *---------------------------------------------------*
 
-local datafile "C:\Users\radha\Downloads\Cleaned 644 data.xlsx"
 local outdir "C:\Users\radha\Downloads\econ644_output"
+local datafile "`outdir'\temp_file.dta"
 local graphdir "`outdir'\graphs"
 local tabledir "`outdir'\tables"
 
@@ -28,84 +30,48 @@ if _rc {
 }
 
 *---------------------------------------------------*
-* IMPORT DATA
+* LOAD CLEANED DATA
 *---------------------------------------------------*
 
-import excel "`datafile'", sheet("Sheet1") firstrow clear
-rename *, lower
+use "`datafile'", clear
 
 describe
 summarize
 
-keep identif_hog bdhoct13 school sixtyfive disabled ///
-     sixtyfivedq disableddq hhpersons hhconsump ///
-     j_sch4up cellphone internet indigonly ///
-     densidad densidad10 spentondocs birthatt nofeelpoor ///
-     satisgovt provincia parroquia periodo bdhecv6r sexohhh
+capture confirm variable log_consumption
+if _rc {
+    gen log_consumption = ln(consumption_pc)
+}
 
-*---------------------------------------------------*
-* RENAME VARIABLES
-*---------------------------------------------------*
+capture confirm variable log_household_size
+if _rc {
+    gen log_household_size = ln(household_size)
+}
 
-rename identif_hog household_id
-rename bdhoct13 bdh_takeup
-rename school school_member
-rename sixtyfive elderly_member
-rename disabled disabled_member
-rename sixtyfivedq elderly_disqualified
-rename disableddq disabled_disqualified
-rename hhpersons household_size
-rename hhconsump consumption_pc
-rename j_sch4up head_school4up
-rename cellphone has_cellphone
-rename internet used_internet
-rename indigonly indigenous_only
-rename densidad parish_density
-rename densidad10 low_density
-rename spentondocs spent_documents
-rename birthatt birth_attendance
-rename nofeelpoor not_feel_poor
-rename satisgovt govt_satisfaction
-rename provincia province
-rename parroquia parish
-rename periodo survey_period
-rename bdhecv6r bdh_current
-rename sexohhh head_sex
+capture confirm variable tech_group
+if _rc {
+    gen tech_group = .
+    replace tech_group = 0 if has_cellphone == 0 & used_internet == 0
+    replace tech_group = 1 if has_cellphone == 1 & used_internet == 0
+    replace tech_group = 2 if has_cellphone == 0 & used_internet == 1
+    replace tech_group = 3 if has_cellphone == 1 & used_internet == 1
 
-*---------------------------------------------------*
-* CREATE ANALYSIS VARIABLES
-*---------------------------------------------------*
+    label define techlbl 0 "No cellphone / no internet" ///
+                         1 "Cellphone only" ///
+                         2 "Internet only" ///
+                         3 "Cellphone and internet", replace
+    label values tech_group techlbl
+}
 
-capture drop log_consumption
-capture drop log_household_size
-capture drop tech_group
-capture drop high_govt_satisfaction
+capture confirm variable high_govt_satisfaction
+if _rc {
+    gen high_govt_satisfaction = .
+    replace high_govt_satisfaction = 1 if govt_satisfaction >= 7 & !missing(govt_satisfaction)
+    replace high_govt_satisfaction = 0 if govt_satisfaction < 7 & !missing(govt_satisfaction)
 
-gen log_consumption = ln(consumption_pc)
-gen log_household_size = ln(household_size)
-
-gen tech_group = .
-replace tech_group = 0 if has_cellphone == 0 & used_internet == 0
-replace tech_group = 1 if has_cellphone == 1 & used_internet == 0
-replace tech_group = 2 if has_cellphone == 0 & used_internet == 1
-replace tech_group = 3 if has_cellphone == 1 & used_internet == 1
-
-label define techlbl 0 "No cellphone / no internet" ///
-                     1 "Cellphone only" ///
-                     2 "Internet only" ///
-                     3 "Cellphone and internet", replace
-label values tech_group techlbl
-
-gen high_govt_satisfaction = .
-replace high_govt_satisfaction = 1 if govt_satisfaction >= 7 & !missing(govt_satisfaction)
-replace high_govt_satisfaction = 0 if govt_satisfaction < 7 & !missing(govt_satisfaction)
-
-label define highsatlbl 0 "Govt satisfaction < 7" 1 "Govt satisfaction 7-10", replace
-label values high_govt_satisfaction highsatlbl
-
-*---------------------------------------------------*
-* LABEL VARIABLES
-*---------------------------------------------------*
+    label define highsatlbl 0 "Govt satisfaction < 7" 1 "Govt satisfaction 7-10", replace
+    label values high_govt_satisfaction highsatlbl
+}
 
 label variable household_id "Household ID"
 label variable bdh_takeup "BDH takeup in Oct. 2013"
@@ -136,8 +102,6 @@ label values bdh_takeup takeuplbl
 
 label define denslbl 0 "Higher-density parish" 1 "Low-density parish", replace
 label values low_density denslbl
-
-save "`outdir'\temp_file.dta", replace
 
 *---------------------------------------------------*
 * DEFINE REGRESSION BLOCKS
@@ -318,7 +282,7 @@ esttab mfx_full using "`tabledir'\table4_full_probit_mfx.rtf", replace ///
 * DESCRIPTIVE STATISTICS: DEPENDENT VARIABLE
 *---------------------------------------------------*
 
-use "`outdir'\temp_file.dta", clear
+use "`datafile'", clear
 
 summarize bdh_takeup, detail
 
@@ -398,7 +362,7 @@ restore
 * PROGRAM CONTROL VARIABLES AMONG NON-BDH HOUSEHOLDS
 *---------------------------------------------------*
 
-use "`outdir'\temp_file.dta", clear
+use "`datafile'", clear
 
 preserve
 
@@ -445,7 +409,7 @@ restore
 * INFORMATIONAL AND PSYCHOLOGICAL CONTROLS AMONG NON-BDH HOUSEHOLDS
 *---------------------------------------------------*
 
-use "`outdir'\temp_file.dta", clear
+use "`datafile'", clear
 
 preserve
 
@@ -578,7 +542,7 @@ graph export "`graphdir'\desc_info_psych_panel_no_bdh.png", replace width(3200)
 * FULL PROBIT FITTED LINE GRAPH
 *---------------------------------------------------*
 
-use "`outdir'\temp_file.dta", clear
+use "`datafile'", clear
 
 local yvar bdh_takeup
 local mainx low_density
